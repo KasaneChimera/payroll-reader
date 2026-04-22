@@ -3,40 +3,33 @@ package com.pluralsight;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
+
 public class Main {
 
     public static void main(String[] args) {
 
-        String fileName = "employees.csv";
-
         try {
-            FileReader fileReader = new FileReader(fileName);
+            BufferedReader buffReader = new BufferedReader(new FileReader("src/main/resources/employees.csv"));
 
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String input;
+            buffReader.readLine(); //.readLine == reads a line
+            while((input = buffReader.readLine()) != null) {
+                String[] splitData = input.split(Pattern.quote("|"));
+                int id = Integer.parseInt(splitData[0]);
+                String name = splitData[1];
+                double hoursWorked = Double.parseDouble(splitData[2]);
+                double payRate = Double.parseDouble(splitData[3]);
 
-            String line;
-
-            while ((line = bufferedReader.readLine()) != null) {
-
-                String[] tokens = line.split("\\|");
-
-                int id = Integer.parseInt(tokens[0]);
-                String name = tokens[1];
-                double hoursWorked = Double.parseDouble(tokens[2]);
-                double payRate = Double.parseDouble(tokens[3]);
-
-                Employee emp = new Employee(id, name, hoursWorked, payRate);
-
-                System.out.printf("ID: %d | Name: %s | Gross Pay: $%.2f%n",
-                        emp.getEmployeeId(),
-                        emp.getName(),
-                        emp.getGrossPay());
+                Employee employee = new Employee(id, name, hoursWorked, payRate);
+                System.out.printf("%d | %s | $%.2f%n", employee.getEmployeeId(), employee.getName(), employee.getGrossPay());
             }
 
-            bufferedReader.close();
+            buffReader.close();
 
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+            e.printStackTrace();
         }
+
     }
 }
